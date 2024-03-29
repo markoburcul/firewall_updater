@@ -11,7 +11,7 @@ To install the firewall updater, execute the installation script as the root use
 sudo install.sh
 ```
 
-The script will be installed in the /opt/scripts/ directory and will run every hour by default. You can adjust the frequency in the installation script if waiting one hour between firewall updates is too long.
+The script will be installed in the `/opt/scripts/` directory and will run every hour by default. You can adjust the frequency in the installation script if waiting one hour between firewall updates is too long.
 
 Logs of the script can be found in the `/var/log/firewall_updater.log` file.
 
