@@ -1,23 +1,27 @@
-# Firewall updater
-The aim of this script is to fetch data from Consul instance running on local machine about other nodes from other fleets,
-create a set of firewall rules and apply them.
+# Firewall Updater
 
-The explanation how the rules are created for the fleet can be seen in the `infra_task.md` document.
+The purpose of this script is to retrieve data from a Consul instance running on the local machine regarding nodes from other fleets, create a set of firewall rules, and apply them.
 
-## Install
-To install the firewall updater it is necessary to run install script it as `root` user.
-`sudo install.sh`
+For details on how the rules are created for each fleet, please refer to the `infra_task.md` document.
 
-The script will be installed in the `/opt/scripts/` folder and it will be run every hour. The frequency can be adjusted in the install script if one hour is too long interval to wait for the firewall update.
+## Installation
+
+To install the firewall updater, execute the installation script as the root user using the following command:
+```bash
+sudo install.sh
+```
+
+The script will be installed in the /opt/scripts/ directory and will run every hour by default. You can adjust the frequency in the installation script if waiting one hour between firewall updates is too long.
 
 Logs of the script can be found in the `/var/log/firewall_updater.log` file.
 
 ## Firewall explanation
-For the firewall rule management, the solution is using `nftables`. The assumption is that they are installed on the host where we want to update firewall and that there are no rules set up front.
-The firewall itself is composed out of two chains with different priority that are hooked on the input hook. The reasoning behind this is that one chain will be dynamically updated as we read Consul data and the other one won't change and thus it will be populated with common security rules such as:
+For firewall rule management, this solution utilizes nftables. It is assumed that nftables is installed on the host where the firewall is to be updated and that no rules are set up initially. The firewall consists of two chains with different priorities, both hooked on the input hook. One chain is dynamically updated based on Consul data, while the other remains static and is populated with common security rules, including:
+
 - allow communication between processes on the same machine
 - accept incoming ICMP (ping)
 - accept SSH
 - accept connections on Consul ports(8300, 8301, 8302, 8600) from the VPN network
 - reject everything else
-Additionally to this there is an accept rule that accepts all connections marked with a mask. This mask is actually added to the processed packets in the first 'dynamic' chain ,if they satisfy some of the rules in it, so when it arrives to the second chain it gets automatically accepted.
+
+Additionally, there is an accept rule that accepts all connections marked with a mask. This mask is added to processed packets in the first "dynamic" chain, and if they satisfy certain rules, they are automatically accepted when they arrive at the second chain.
